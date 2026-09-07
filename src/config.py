@@ -3,6 +3,10 @@ import os
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_PATH = Path(os.getenv("DATA_PATH", ROOT / "data/application_train.csv"))
+DATA_URL = os.getenv(
+    "DATA_URL",
+    "https://drive.google.com/file/d/1QsiFxKvTvvLkMyis-vnVzVk8QzLpL3Yt/view?usp=sharing",
+)
 MODEL_PATH = Path(os.getenv("MODEL_PATH", ROOT / "artifacts/model_bundle.joblib"))
 TARGET = "TARGET"
 ID_COLUMN = "SK_ID_CURR"
