@@ -2,6 +2,10 @@
 
 An end-to-end, explainable credit-risk application built for the Home Credit Default Risk dataset. It covers EDA, default-probability modelling, risk bands, SHAP explanations, business-readable surrogate rules, guarded natural-language-to-SQL, a Streamlit UI, and one-command Docker deployment.
 
+## Live Application
+
+[Open CreditLens AI](https://creditlens-ai-neostats.streamlit.app)
+
 ## Architecture
 
 ```mermaid
