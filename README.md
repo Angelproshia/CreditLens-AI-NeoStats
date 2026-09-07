@@ -5,6 +5,7 @@ An end-to-end, explainable credit-risk application built for the Home Credit Def
 ## Live Application
 
 [Open CreditLens AI](https://creditlens-ai-neostats.streamlit.app)
+> Note: The application is hosted on Streamlit Community Cloud. The first launch after inactivity may take a few minutes while the dataset is downloaded and the model is initialized.
 
 ## Architecture
 
