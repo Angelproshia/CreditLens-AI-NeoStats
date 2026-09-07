@@ -1,8 +1,9 @@
 from pathlib import Path
+import gdown
 import pandas as pd
 import plotly.express as px
 import streamlit as st
-from src.config import DATA_PATH, MODEL_PATH
+from src.config import DATA_PATH, DATA_URL, MODEL_PATH
 from src.data import load_data, quality_summary, select_features
 from src.model import train_model, load_bundle, predict_one, explain_linear_prediction
 from src.talk_to_data import ask, EXAMPLES
@@ -15,8 +16,16 @@ st.markdown("""<style>
 </style><div class='hero'><h1>CreditLens AI</h1><div class='small'>Explainable credit-risk intelligence for faster, auditable decisions</div></div>""", unsafe_allow_html=True)
 
 if not Path(DATA_PATH).exists():
-    st.error(f"Dataset not found at {DATA_PATH}. Download `application_train.csv` from the Home Credit competition and place it in `data/`.")
-    st.stop()
+    try:
+        Path(DATA_PATH).parent.mkdir(parents=True, exist_ok=True)
+        with st.spinner("Downloading the Home Credit dataset for first-time setup..."):
+            downloaded = gdown.download(DATA_URL, str(DATA_PATH), quiet=True, fuzzy=True)
+        if not downloaded or not Path(DATA_PATH).exists():
+            raise RuntimeError("Google Drive did not return the dataset file.")
+    except Exception as exc:
+        st.error(f"Dataset setup failed: {exc}")
+        st.info("Confirm that the Google Drive dataset permission is set to ‘Anyone with the link – Viewer’.")
+        st.stop()
 
 @st.cache_data(show_spinner=False)
 def get_data(): return load_data(DATA_PATH)
