@@ -27,7 +27,7 @@ if not Path(DATA_PATH).exists():
         st.info("Confirm that the Google Drive dataset permission is set to ‘Anyone with the link – Viewer’.")
         st.stop()
 
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def get_data(): return load_data(DATA_PATH)
 
 df = get_data()
@@ -36,12 +36,13 @@ tabs = st.tabs(["Overview & EDA", "Risk prediction", "Explainability & rules", "
 with tabs[0]:
     c1,c2,c3,c4 = st.columns(4)
     c1.metric("Applications", f"{len(df):,}")
-    c2.metric("Features", f"{df.shape[1]-1}")
+    c2.metric("Model features", f"{len(select_features(df))}")
     c3.metric("Default rate", f"{df.TARGET.mean()*100:.2f}%")
     c4.metric("Duplicate rows", f"{df.duplicated().sum():,}")
     left,right = st.columns(2)
     with left:
-        st.plotly_chart(px.histogram(df, x="AMT_CREDIT", color="TARGET", nbins=45, barmode="overlay", title="Credit amount distribution"), use_container_width=True)
+        chart_df = df.sample(min(50000, len(df)), random_state=42)
+        st.plotly_chart(px.histogram(chart_df, x="AMT_CREDIT", color="TARGET", nbins=45, barmode="overlay", title="Credit amount distribution (50k-row visual sample)"), use_container_width=True)
     with right:
         grouped=df.groupby("NAME_INCOME_TYPE",dropna=False).TARGET.agg(["mean","size"]).reset_index().sort_values("size",ascending=False).head(10)
         grouped["default_rate_pct"]=grouped["mean"]*100

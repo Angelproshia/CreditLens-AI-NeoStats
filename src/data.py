@@ -1,11 +1,14 @@
 from __future__ import annotations
 import pandas as pd
-from .config import DATA_PATH, TARGET, PREFERRED_FEATURES
+from .config import DATA_PATH, TARGET, ID_COLUMN, PREFERRED_FEATURES
 
 
 def load_data(path=DATA_PATH, sample_size: int | None = None) -> pd.DataFrame:
     path = str(path)
-    df = pd.read_csv(path)
+    # Reading all 122 source columns can exceed free deployment memory.
+    # Keep the target, applicant id and the documented modelling/EDA subset.
+    required = set(PREFERRED_FEATURES + [TARGET, ID_COLUMN])
+    df = pd.read_csv(path, usecols=lambda column: column in required)
     if TARGET not in df.columns:
         raise ValueError(f"Expected target column '{TARGET}' in {path}")
     if sample_size and len(df) > sample_size:
@@ -27,4 +30,3 @@ def quality_summary(df: pd.DataFrame) -> pd.DataFrame:
         "missing_pct": (df.isna().mean() * 100).round(2),
         "unique_values": df.nunique(dropna=True),
     }).sort_values("missing_pct", ascending=False)
-
